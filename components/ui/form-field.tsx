@@ -11,10 +11,12 @@ import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
 interface FormFieldProps<T extends FieldValues> {
   control: Control<T>;
+  type?: "text" | "email" | "password" | "file" | "number";
   name: Path<T>;
   label: string;
   placeholder?: string;
-  type?: "text" | "email" | "password" | "file" | "number";
+  disabled?: boolean;
+  className?: string;
 }
 
 const FormField = <T extends FieldValues>({
@@ -23,6 +25,7 @@ const FormField = <T extends FieldValues>({
   label,
   placeholder,
   type = "text",
+  disabled = false,
 }: FormFieldProps<T>) => (
   <Controller
     name={name}
@@ -34,6 +37,7 @@ const FormField = <T extends FieldValues>({
           <Input
             placeholder={placeholder}
             type={type}
+            disabled={disabled}
             {...field}
             className="input-style-2"
           />
