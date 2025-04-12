@@ -19,8 +19,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import ItemsTable from "./ItemsTable";
-import ItemsPagination from "./ItemsPagination";
+import ItemsTable from "./components/ItemsTable";
+import ItemsPagination from "./components/ItemsPagination";
 
 const Items: React.FC<ItemsProps> = ({ page, limit: limitNumbers }) => {
   const [items, setItems] = useState<Post[]>([]);
@@ -31,7 +31,7 @@ const Items: React.FC<ItemsProps> = ({ page, limit: limitNumbers }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(limitNumbers || 8);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchField, setSearchField] = useState<string>("all");
+  const [searchField, setSearchField] = useState<string>("title");
   const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
 
   const fetchData = async (pageNum: number, postLimit: number) => {

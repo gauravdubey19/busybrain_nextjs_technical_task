@@ -57,6 +57,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider === "google" && profile?.email) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: profile.email },
+          include: { accounts: true },
+        });
+
+        // if user exists but doesn't have a Google account linked
+        if (existingUser && existingUser.accounts.length === 0) {
+          await prisma.account.create({
+            data: {
+              userId: existingUser.id,
+              type: account.type,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              expires_at: account.expires_at,
+              token_type: account.token_type,
+              scope: account.scope,
+              id_token: account.id_token,
+            },
+          });
+        }
+
+        // updating user image if available from google profile
+        if (profile.picture && existingUser && !existingUser.image) {
+          await prisma.user.update({
+            where: { id: existingUser.id },
+            data: { image: profile.picture },
+          });
+        }
+
+        return true;
+      }
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         const dbUser = await prisma.user.findUnique({
@@ -86,5 +123,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
+  },
+  pages: {
+    signIn: "/sign-in",
   },
 });
